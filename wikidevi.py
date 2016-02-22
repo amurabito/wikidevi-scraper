@@ -1,5 +1,6 @@
 # wikidevi.py
 # can't think of a better name for now
+# v.5 - Poland Springs
 
 import simplemediawiki
 
