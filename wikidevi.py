@@ -1,18 +1,19 @@
+#!/usr/bin/python
 # wikidevi.py
 # can't think of a better name for now
 # v.5 - Poland Springs
 
 import simplemediawiki
+from sys import argv
 
 def main():
 
     wiki = init()
 
-    while True:
-        targetAP = searchForAP(wiki)
-        chosenAP = querySpecificPage(wiki, targetAP)
-        if chosenAP:
-            formatAndPrint(chosenAP)
+    targetAP = searchForAP(wiki)
+    chosenAP = querySpecificPage(wiki, targetAP)
+    if chosenAP:
+        formatAndPrint(chosenAP)
 
 def init():
     wiki = simplemediawiki.MediaWiki('https://wikidevi.com/w/api.php')
@@ -21,8 +22,12 @@ def init():
 
 
 def searchForAP(wiki):
-    print "\n\nEnter an Access Point: (or type quit)"
-    model = raw_input()
+
+    if len(argv) > 1:
+        model = str(argv[1])
+    else:
+        print "\n\nEnter an Access Point: (or type quit)"
+        model = raw_input()
 
     if 'quit' in model:
         print "thank you for playing!"
@@ -88,7 +93,7 @@ def formatAndPrint(model):
 
     keyMetrics = ["|brand", "|model", "revision", "country", "|type", "fcc_id", "cpu1_brand", "cpu1_model", "ram1_brand", "ram1_model", "wi1", "wi2", "lan", "802dot11", "default", "oui"]
 
-    print "Access Point Summary:\n"
+    print "Access Point Summary:"
     for item in temp:
         if any(metrics in item for metrics in keyMetrics):
             if not (item.endswith("=") or item.endswith("}}")):
