@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # wikidevi.py
-# can't think of a better name for now
-# v.5 - Poland Springs
+# v.51 - Poland Springs
 
 import simplemediawiki
 from sys import argv
@@ -9,7 +8,6 @@ from sys import argv
 def main():
 
     wiki = init()
-
     targetAP = searchForAP(wiki)
     chosenAP = querySpecificPage(wiki, targetAP)
     if chosenAP:
@@ -82,14 +80,11 @@ def formatAndPrint(model):
     accessPoint = model['query']['pages']
     temp = str(accessPoint).partition("{{")[2].rpartition("}}")[0].split("\\n")
 
-    # full details
+    # full details, TODO - key off of DEBUG enabled
     #for property in temp:
     #    print property
 
-
-
-
-    # summary
+    # print a summary of key metrics
 
     keyMetrics = ["|brand", "|model", "revision", "country", "|type", "fcc_id", "cpu1_brand", "cpu1_model", "ram1_brand", "ram1_model", "wi1", "wi2", "lan", "802dot11", "default", "oui"]
 
