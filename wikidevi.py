@@ -4,11 +4,14 @@
 import simplemediawiki
 
 def main():
+
     wiki = init()
-    targetAP = searchForAP(wiki)
-    chosenAP = querySpecificPage(wiki, targetAP)
-    if chosenAP:
-        formatPageResults(chosenAP)
+
+    while True:
+        targetAP = searchForAP(wiki)
+        chosenAP = querySpecificPage(wiki, targetAP)
+        if chosenAP:
+            formatAndPrint(chosenAP)
 
 def init():
     wiki = simplemediawiki.MediaWiki('https://wikidevi.com/w/api.php')
@@ -17,8 +20,12 @@ def init():
 
 
 def searchForAP(wiki):
-    print "Enter an AP model: "
+    print "\n\nEnter an Access Point: (or type quit)"
     model = raw_input()
+
+    if 'quit' in model:
+        print "thank you for playing!"
+        exit(0)
 
     # search for a page containing the AP, then try to pull up the AP details
     search = {'action': 'query',
@@ -43,7 +50,7 @@ def searchForAP(wiki):
             if not "REDIRECT" in item['snippet']:
                 print str(i) + ":\t" + item['title']
                 i += 1
-        print 'please type the number of the model'
+        print '\n please select the hardware rev'
         response = raw_input()
         model = results.get('search')[int(response) - 1]['title']
     else:
@@ -61,17 +68,17 @@ def querySpecificPage(wiki, model):
                   'rvprop': 'content',
                   'format': 'json'}
         response = wiki.call(values)
-        print response
+        #print response
         return response
     return False
 
-def formatPageResults(model):
+def formatAndPrint(model):
     accessPoint = model['query']['pages']
     temp = str(accessPoint).partition("{{")[2].rpartition("}}")[0].split("\\n")
 
     # full details
-    for property in temp:
-        print property
+    #for property in temp:
+    #    print property
 
 
 
@@ -83,7 +90,8 @@ def formatPageResults(model):
     print "Access Point Summary:\n"
     for item in temp:
         if any(metrics in item for metrics in keyMetrics):
-            print item
+            if not (item.endswith("=") or item.endswith("}}")):
+                print item
             continue
 
 if __name__ == "__main__":
