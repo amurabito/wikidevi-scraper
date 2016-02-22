@@ -1,6 +1,4 @@
-<snippet>
-  <content><![CDATA[
-# ${1:wikidevi-scraper}
+# wikidevi-scraper
 Wrap queries to wikidevi.com, to grab access point information and stats
 ## Installation
 symlink it into /usr/bin/local
@@ -11,6 +9,3 @@ or run the script without arguments and it will prompt you.
 TODO: Write credits
 ## License
 TODO: Write license
-]]></content>
-  <tabTrigger>readme</tabTrigger>
-</snippet>
