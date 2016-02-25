@@ -44,8 +44,8 @@ def searchForAP(wiki):
     # for the simple case, we have only 1 match to the search query
     if totalhits == 1:
         model = results.get('search')[0]['title']
-    elif totalhits > 10:
-        print "over 10 results found, be more specific"
+    elif totalhits > 20:
+        print "over 20 results found, be more specific"
         model = None
     elif totalhits > 1:
         print "more than one found, here are your options: \n"
