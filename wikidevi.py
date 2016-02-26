@@ -50,18 +50,15 @@ def searchForAP(wiki):
     elif totalhits > 1:
         print "more than one found, here are your options: \n"
         i = 1
-        searchResults = {}
+        searchResults = list()
         for item in results.get('search'):
             if not "REDIRECT" in item['snippet']:
                 print str(i) + ":\t" + item['title']
                 i += 1
-                searchResults.update(item)
-                # the bug here is that when we hit a redirect, it causes an off by one error.
-                # it's still part of the results.get search result.
+                searchResults.append(item)
         print '\n please select the hardware rev'
         response = raw_input()
-        model = results.get('search')[int(response) - 1]['title']
-        model = searchResults.get('search')[int(response) - 1]['title']
+        model = searchResults.__getitem__(int(response) - 1)['title']
     else:
         print "nothing found"
         model = None
