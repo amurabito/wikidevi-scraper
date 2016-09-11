@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # wikidevi.py
-# v.51 - Poland Springs
+# v.52 - Poland Springs
 
 import simplemediawiki
 from sys import argv
+
 
 def main():
 
@@ -13,9 +14,11 @@ def main():
     if chosenAP:
         formatAndPrint(chosenAP)
 
+
 def init():
     wiki = simplemediawiki.MediaWiki('https://wikidevi.com/w/api.php')
-    simplemediawiki.build_user_agent("wikidevi-scraper", ".51", "gitlab.com/admo")
+    simplemediawiki.build_user_agent(
+        "wikidevi-scraper", ".51", "gitlab.com/admo")
     return wiki
 
 
@@ -52,7 +55,7 @@ def searchForAP(wiki):
         i = 1
         searchResults = list()
         for item in results.get('search'):
-            if not "REDIRECT" in item['snippet']:
+            if "REDIRECT" not in item['snippet']:
                 print str(i) + ":\t" + item['title']
                 i += 1
                 searchResults.append(item)
@@ -74,21 +77,25 @@ def querySpecificPage(wiki, model):
                   'rvprop': 'content',
                   'format': 'json'}
         response = wiki.call(values)
-        #print response
+        # print response
         return response
     return False
+
 
 def formatAndPrint(model):
     accessPoint = model['query']['pages']
     temp = str(accessPoint).partition("{{")[2].rpartition("}}")[0].split("\\n")
 
     # full details, TODO - key off of DEBUG enabled
-    #for property in temp:
+    # for property in temp:
     #    print property
 
     # print a summary of key metrics
 
-    keyMetrics = ["|brand", "|model", "revision", "country", "|type", "fcc_id", "cpu1_brand", "cpu1_model", "ram1_brand", "ram1_model", "wi1", "wi2", "lan", "802dot11", "default", "oui"]
+    keyMetrics = ["|brand", "|model", "revision", "country", "|type",
+                  "fcc_id", "cpu1_brand", "cpu1_model", "ram1_brand",
+                  "ram1_model", "wi1", "wi2", "lan", "802dot11",
+                  "default", "oui"]
 
     print "Access Point Summary:"
     for item in temp:
