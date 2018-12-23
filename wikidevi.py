@@ -3,106 +3,108 @@
 # v.52 - Poland Springs
 
 import simplemediawiki
+import coloredlogs
+import logger as log
 from sys import argv
 
-
-def main():
-
-    wiki = init()
-    targetAP = searchForAP(wiki)
-    chosenAP = querySpecificPage(wiki, targetAP)
-    if chosenAP:
-        formatAndPrint(chosenAP)
+class APFinder(): 
 
 
-def init():
-    wiki = simplemediawiki.MediaWiki('https://wikidevi.com/w/api.php')
-    simplemediawiki.build_user_agent(
-        "wikidevi-scraper", ".51", "gitlab.com/admo")
-    return wiki
+    def __init__(self):
+        self.wiki = simplemediawiki.MediaWiki('https://wikidevi.com/w/api.php')
+        simplemediawiki.build_user_agent(
+            "wikidevi-scraper", ".51", "gitlab.com/admo")
+        coloredlogs.install()
 
+    def main(self):
 
-def searchForAP(wiki):
+        targetAP = self.searchForAP()
+        chosenAP = self.querySpecificPage(targetAP)
+        if chosenAP:
+            self.formatAndPrint(chosenAP)
 
-    if len(argv) > 1:
-        model = str(argv[1])
-    else:
-        print "\n\nEnter an Access Point: (or type quit)"
-        model = raw_input()
+    def searchForAP(self):
 
-    if 'quit' in model:
-        print "thank you for playing!"
-        exit(0)
+        if len(argv) > 1:
+            model = str(argv[1])
+        else:
+            print "Enter an Access Point:"
+            model = raw_input()
 
-    # search for a page containing the AP, then try to pull up the AP details
-    search = {'action': 'query',
-              'list': 'search',
-              'srsearch': model,
-              'format': 'json'}
+        if 'quit' in model:
+            log.info("exiting.")
+            exit(0)
 
-    wikiresults = wiki.call(search)
-    results = wikiresults.get('query')
-    totalhits = results.get('searchinfo').get('totalhits')
-
-    # for the simple case, we have only 1 match to the search query
-    if totalhits == 1:
-        model = results.get('search')[0]['title']
-    elif totalhits > 20:
-        print "over 20 results found, be more specific"
-        model = None
-    elif totalhits > 1:
-        print "more than one found, here are your options: \n"
-        i = 1
-        searchResults = list()
-        for item in results.get('search'):
-            if "REDIRECT" not in item['snippet']:
-                print str(i) + ":\t" + item['title']
-                i += 1
-                searchResults.append(item)
-        print '\n please select the hardware rev'
-        response = raw_input()
-        model = searchResults.__getitem__(int(response) - 1)['title']
-    else:
-        print "nothing found"
-        model = None
-    return model
-
-
-def querySpecificPage(wiki, model):
-    if model:
-        # pull up the model if we have
-        values = {'action': 'query',
-                  'titles': model,
-                  'prop': 'revisions',
-                  'rvprop': 'content',
+        # search for a page containing the AP, then try to pull up the AP details
+        search = {'action': 'query',
+                  'list': 'search',
+                  'srsearch': model,
                   'format': 'json'}
-        response = wiki.call(values)
-        # print response
-        return response
-    return False
+
+        wikiresults = self.wiki.call(search)
+        results = wikiresults.get('query')
+        totalhits = results.get('searchinfo').get('totalhits')
+
+        # for the simple case, we have only 1 match to the search query
+        if totalhits == 1:
+            model = results.get('search')[0]['title']
+        elif totalhits > 20:
+            print "over 20 results found, be more specific"
+            model = None
+        elif totalhits > 1:
+            print "more than one found, here are your options: \n"
+            i = 1
+            searchResults = list()
+            for item in results.get('search'):
+                if "REDIRECT" not in item['snippet']:
+                    print str(i) + ":\t" + item['title']
+                    i += 1
+                    searchResults.append(item)
+            print '\n please select the hardware rev'
+            response = raw_input()
+            model = searchResults.__getitem__(int(response) - 1)['title']
+        else:
+            print "nothing found"
+            model = None
+        return model
 
 
-def formatAndPrint(model):
-    accessPoint = model['query']['pages']
-    temp = str(accessPoint).partition("{{")[2].rpartition("}}")[0].split("\\n")
+    def querySpecificPage(self, model):
+        if model:
+            # pull up the model if we have
+            values = {'action': 'query',
+                      'titles': model,
+                      'prop': 'revisions',
+                      'rvprop': 'content',
+                      'format': 'json'}
+            response = self.wiki.call(values)
+            # print response
+            return response
+        return False
 
-    # full details, TODO - key off of DEBUG enabled
-    # for property in temp:
-    #    print property
 
-    # print a summary of key metrics
+    def formatAndPrint(self, model):
+        accessPoint = model['query']['pages']
+        temp = str(accessPoint).partition("{{")[2].rpartition("}}")[0].split("\\n")
 
-    keyMetrics = ["|brand", "|model", "revision", "country", "|type",
-                  "fcc_id", "cpu1_brand", "cpu1_model", "ram1_brand",
-                  "ram1_model", "wi1", "wi2", "lan", "802dot11",
-                  "default", "oui"]
+        # full details, TODO - key off of DEBUG enabled
+        # for property in temp:
+        #    print property
 
-    print "Access Point Summary:"
-    for item in temp:
-        if any(metrics in item for metrics in keyMetrics):
-            if not (item.endswith("=") or item.endswith("}}")):
-                print item
-            continue
+        # print a summary of key metrics
+
+        keyMetrics = ["|brand", "|model", "revision", "country", "|type",
+                      "fcc_id", "cpu1_brand", "cpu1_model", "ram1_brand",
+                      "ram1_model", "wi1", "wi2", "lan", "802dot11",
+                      "default", "oui"]
+
+        print "Access Point Summary:"
+        for item in temp:
+            if any(metrics in item for metrics in keyMetrics):
+                if not (item.endswith("=") or item.endswith("}}")):
+                    print item
+                continue
 
 if __name__ == "__main__":
-    main()
+    wikidevi = APFinder()
+    wikidevi.main()
