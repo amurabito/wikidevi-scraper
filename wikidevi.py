@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # wikidevi.py
-# v.52 - Poland Springs
+# v.53 - Arrowhead
 
 import simplemediawiki
 import coloredlogs
