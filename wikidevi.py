@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # wikidevi.py
-# v.53 - Arrowhead
+# v.60 - Aquafina
 
 import simplemediawiki
 import coloredlogs
@@ -11,9 +11,9 @@ class APFinder():
 
 
     def __init__(self):
-        self.wiki = simplemediawiki.MediaWiki('https://wikidevi.com/w/api.php')
+        self.wiki = simplemediawiki.MediaWiki('https://wikidevi.wi-cat.ru/api.php')
         simplemediawiki.build_user_agent(
-            "wikidevi-scraper", ".51", "gitlab.com/admo")
+            "wikidevi-scraper", ".60", "gitlab.com/admo")
         coloredlogs.install()
 
     def main(self):
