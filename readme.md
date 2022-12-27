@@ -1,7 +1,7 @@
 # wikidevi-scraper
 Wrap queries to wi-cat's clone of wikidevi, to grab access point information and stats
 ## Installation
-symlink it into /usr/bin/local, make it executable.
+symlink it into /usr/local/bin, make it executable.
 you probably also need to:
     pip install simplemediawiki kitchen
 ## Usage
